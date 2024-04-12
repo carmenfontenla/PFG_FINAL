@@ -1,4 +1,6 @@
 Códigos para trabajar en GIT HUB
+Saber en que carpeta y moverse a esa (si me da error de no estar dentro de ningun repositorio)
+cd PF (presionar tecla tabulador)
 Saber en qué rama estoy
 	git branch (en verde se ve cual es)
 Crear una nueva rama
