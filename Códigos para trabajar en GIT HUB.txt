@@ -1,0 +1,14 @@
+Códigos para trabajar en GIT HUB
+Saber en que carpeta y moverse a esa (si me da error de no estar dentro de ningun repositorio)
+cd PF (presionar tecla tabulador)
+Saber en qué rama estoy
+	git branch (en verde se ve cual es)
+Crear una nueva rama
+	git branch 'nombrerama' (como la quiera llamar sin comillas)
+Cambiar entre ramas
+	git checkout 'nombrerama' (para estar en la rama que quiera)
+Subir cambios a la rama
+	git status (abre una lista de todos los archivos que se modificaron y me permite ver si quiero subir todos los archivos o solo unos cuantos)
+	git add . (sube todos los archivos que se modificaron)
+	git commit -m "(mensaje que describe lo que se ha hecho)"
+	git push (sube todos los cambios)
