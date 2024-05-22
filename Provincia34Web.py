@@ -49,8 +49,30 @@ df_provincia34 = num_accidentes_por_dia_semana34.merge(num_victimas_dia_semana34
 
 df_provincia34 = df_provincia34[['ANYO_x', 'FECHA', 'count', 'TOTAL_VICTIMAS_24H']]
 
+# ACCIDENTES
 
 df_provincia34['y'] = df_provincia34['count']
+df_provincia34['ds'] = pd.to_datetime(pd.to_datetime(df_provincia34['FECHA']).dt.date)
+
+ts = df_provincia34[['ds', 'y']]
+model = Prophet(
+   yearly_seasonality=True,
+   seasonality_mode=['additive','multiplicative'][0]
+   ).add_country_holidays(country_name='ESP'
+   ).fit(ts)
+
+future = model.make_future_dataframe(periods=10)
+forecast = model.predict(future)
+
+from prophet.diagnostics import cross_validation
+df_cv = cross_validation(model, initial='336 days', period='84 days', horizon = '20 days')
+
+from prophet.diagnostics import performance_metrics
+df_p = performance_metrics(df_cv)
+
+# VÍCTIMAS
+
+df_provincia34['y'] = df_provincia34['TOTAL_VICTIMAS_24H']
 df_provincia34['ds'] = pd.to_datetime(pd.to_datetime(df_provincia34['FECHA']).dt.date)
 
 ts = df_provincia34[['ds', 'y']]
