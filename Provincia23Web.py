@@ -24,6 +24,7 @@ from dateutil.relativedelta import relativedelta
 from keras.models import Sequential
 from keras.layers import Dense,Activation,Flatten
 from sklearn.preprocessing import MinMaxScaler
+import pickle 
 
 df = pd.read_csv('BBDD/Datos_preprocesados_accidentes_y_victimas_accidentes.csv')
 
@@ -55,38 +56,13 @@ df_provincia23['y'] = df_provincia23['count']
 df_provincia23['ds'] = pd.to_datetime(pd.to_datetime(df_provincia23['FECHA']).dt.date)
 
 ts = df_provincia23[['ds', 'y']]
-model = Prophet(
+model_v = Prophet(
    yearly_seasonality=True,
    seasonality_mode=['additive','multiplicative'][0]
    ).add_country_holidays(country_name='ESP'
    ).fit(ts)
 
-future = model.make_future_dataframe(periods=10)
-forecast = model.predict(future)
+with open('MODELOS/model_Provincia23_Victimas.pkl', 'wb') as file:
+    pickle.dump(model_v, file)  
 
-from prophet.diagnostics import cross_validation
-df_cv = cross_validation(model, initial='336 days', period='84 days', horizon = '20 days')
-
-from prophet.diagnostics import performance_metrics
-df_p = performance_metrics(df_cv)
-
-# VÍCTIMAS
-
-df_provincia23['y'] = df_provincia23['TOTAL_VICTIMAS_24H']
-df_provincia23['ds'] = pd.to_datetime(pd.to_datetime(df_provincia23['FECHA']).dt.date)
-
-ts = df_provincia23[['ds', 'y']]
-model = Prophet(
-   yearly_seasonality=True,
-   seasonality_mode=['additive','multiplicative'][0]
-   ).add_country_holidays(country_name='ESP'
-   ).fit(ts)
-
-future = model.make_future_dataframe(periods=10)
-forecast = model.predict(future)
-
-from prophet.diagnostics import cross_validation
-df_cv = cross_validation(model, initial='336 days', period='84 days', horizon = '20 days')
-
-from prophet.diagnostics import performance_metrics
-df_p = performance_metrics(df_cv)
+# VÍCTIMAS NINGUNO

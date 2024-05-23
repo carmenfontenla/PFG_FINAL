@@ -24,6 +24,7 @@ from dateutil.relativedelta import relativedelta
 from keras.models import Sequential
 from keras.layers import Dense,Activation,Flatten
 from sklearn.preprocessing import MinMaxScaler
+import pickle 
 
 df = pd.read_csv('BBDD/Datos_preprocesados_accidentes_y_victimas_accidentes.csv')
 
@@ -51,42 +52,77 @@ df_provincia14 = df_provincia14[['ANYO_x', 'FECHA', 'count', 'TOTAL_VICTIMAS_24H
 
 # ACCIDENTES
 
-df_provincia14['y'] = df_provincia14['count']
-df_provincia14['ds'] = pd.to_datetime(pd.to_datetime(df_provincia14['FECHA']).dt.date)
+PASOS=84
+ 
+# convert series to supervised learning
+def series_to_supervised(data, n_in=1, n_out=1, dropnan=True):
+    n_vars = 1 if type(data) is list else data.shape[1]
+    df = pd.DataFrame(data)
+    cols, names = list(), list()
+    # input sequence (t-n, ... t-1)
+    for i in range(n_in, 0, -1):
+        cols.append(df.shift(i))
+        names += [('var%d(t-%d)' % (j+1, i)) for j in range(n_vars)]
+    # forecast sequence (t, t+1, ... t+n)
+    for i in range(0, n_out):
+        cols.append(df.shift(-i))
+        if i == 0:
+            names += [('var%d(t)' % (j+1)) for j in range(n_vars)]
+        else:
+            names += [('var%d(t+%d)' % (j+1, i)) for j in range(n_vars)]
+    # put it all together
+    agg = pd.concat(cols, axis=1)
+    agg.columns = names
+    # drop rows with NaN values
+    if dropnan:
+        agg.dropna(inplace=True)
+    return agg
+ 
+# load dataset
+values = df_provincia14['count'].values
+# ensure all data is float
+values = values.astype('float32')
+# normalize features
+scaler = MinMaxScaler(feature_range=(-1, 1))
+values=values.reshape(-1, 1) # esto lo hacemos porque tenemos 1 sola dimension
+scaled = scaler.fit_transform(values)
+# frame as supervised learning
+reframed = series_to_supervised(scaled, PASOS, 1)
+reframed.head()
 
-ts = df_provincia14[['ds', 'y']]
-model = Prophet(
-   yearly_seasonality=True,
-   seasonality_mode=['additive','multiplicative'][0]
-   ).add_country_holidays(country_name='ESP'
-   ).fit(ts)
+values = reframed.values
+n_train_days = 320
+train = values[:n_train_days, :]
+test = values[n_train_days:, :]
+# split isnto input and outputs
+x_train, y_train = train[:, :-1], train[:, -1]
+x_val, y_val = test[:, :-1], test[:, -1]
+# reshape input to be 3D [samples, timesteps, features]
+x_train = x_train.reshape((x_train.shape[0], 1, x_train.shape[1]))
+x_val = x_val.reshape((x_val.shape[0], 1, x_val.shape[1]))
+print(x_train.shape, y_train.shape, x_val.shape, y_val.shape)
 
-future = model.make_future_dataframe(periods=10)
-forecast = model.predict(future)
+def crear_modeloFF():
+    model_a = Sequential()
+    model_a.add(Dense(PASOS, input_shape=(1,PASOS),activation='tanh'))
+    model_a.add(Flatten())
+    model_a.add(Dense(1, activation='tanh'))
+    model_a.compile(loss='mse',optimizer='Adam',metrics=["mae"])
+    model_a.summary()
+    return model_a
 
-from prophet.diagnostics import cross_validation
-df_cv = cross_validation(model, initial='336 days', period='84 days', horizon = '20 days')
+EPOCHS=20
 
-from prophet.diagnostics import performance_metrics
-df_p = performance_metrics(df_cv)
+model_a = crear_modeloFF()
+ 
+history=model_a.fit(x_train,y_train,epochs=EPOCHS,validation_data=(x_val,y_val),batch_size=PASOS)
 
-# VÍCTIMAS
+with open('MODELOS/model_Provincia14_Accidentess.pkl', 'wb') as file:
+    pickle.dump(model_a, file)
 
-df_provincia14['y'] = df_provincia14['TOTAL_VICTIMAS_24H']
-df_provincia14['ds'] = pd.to_datetime(pd.to_datetime(df_provincia14['FECHA']).dt.date)
+with open('MODELOS/scaler_Provincia14_Accidentes.pkl', 'wb') as file:
+    pickle.dump(scaler, file)
 
-ts = df_provincia14[['ds', 'y']]
-model = Prophet(
-   yearly_seasonality=True,
-   seasonality_mode=['additive','multiplicative'][0]
-   ).add_country_holidays(country_name='ESP'
-   ).fit(ts)
+model_a.save_weights('MODELOS/accidentes_Provincia14.weights.h5')
 
-future = model.make_future_dataframe(periods=10)
-forecast = model.predict(future)
-
-from prophet.diagnostics import cross_validation
-df_cv = cross_validation(model, initial='336 days', period='84 days', horizon = '20 days')
-
-from prophet.diagnostics import performance_metrics
-df_p = performance_metrics(df_cv)
+# VÍCTIMAS NINGUNO

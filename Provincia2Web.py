@@ -50,7 +50,7 @@ df_provincia2 = num_accidentes_por_dia_semana2.merge(num_victimas_dia_semana2, o
 
 df_provincia2 = df_provincia2[['ANYO_x', 'FECHA', 'count', 'TOTAL_VICTIMAS_24H']]
 
-# ACCIDENTES
+# ACCIDENTES REDES NEURONALES
 
 PASOS=84
  
@@ -125,7 +125,7 @@ with open('MODELOS/scaler_Provincia2_Accidentes.pkl', 'wb') as file:
 
 model_a.save_weights('MODELOS/accidentes_Provincia2.weights.h5')
 
-# VÍCTIMAS
+# VÍCTIMAS PROPHET
 
 df_provincia2['y'] = df_provincia2['TOTAL_VICTIMAS_24H']
 df_provincia2['ds'] = pd.to_datetime(pd.to_datetime(df_provincia2['FECHA']).dt.date)

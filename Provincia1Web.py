@@ -50,7 +50,7 @@ df_provincia1 = num_accidentes_por_dia_semana1.merge(num_victimas_dia_semana1, o
 
 df_provincia1 = df_provincia1[['ANYO_x', 'FECHA', 'count', 'TOTAL_VICTIMAS_24H']]
 
-# ACCIDENTES
+# ACCIDENTES PROPHET
 
 df_provincia1['y'] = df_provincia1['count']
 df_provincia1['ds'] = pd.to_datetime(pd.to_datetime(df_provincia1['FECHA']).dt.date)
@@ -64,9 +64,9 @@ model_a = Prophet(
 
 
 with open('MODELOS/model_Provincia1_Accidentes.pkl', 'wb') as file:
-    pickle.dump(model_a, file)  #PARA PROPHET
-
-# VÍCTIMAS
+    pickle.dump(model_a, file)  
+    
+# VÍCTIMAS PROPHET
 
 df_provincia1['y'] = df_provincia1['TOTAL_VICTIMAS_24H']
 df_provincia1['ds'] = pd.to_datetime(pd.to_datetime(df_provincia1['FECHA']).dt.date)
