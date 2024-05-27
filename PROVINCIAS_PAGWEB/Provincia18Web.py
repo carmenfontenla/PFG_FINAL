@@ -119,7 +119,7 @@ history=model_a.fit(x_train,y_train,epochs=EPOCHS,validation_data=(x_val,y_val),
 with open('MODELOS/model_Provincia18_Accidentess.pkl', 'wb') as file:
     pickle.dump(model_a, file)
 
-with open('MODELOS/scaler_Provincia18_Accidentes.pkl', 'wb') as file:
+with open('MODELOS/scaler_Provincia18_Accidentes.sav', 'wb') as file:
     pickle.dump(scaler, file)
 
 model_a.save_weights('MODELOS/accidentes_Provincia18.weights.h5')
