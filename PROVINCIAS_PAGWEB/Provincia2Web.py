@@ -50,6 +50,10 @@ df_provincia2 = num_accidentes_por_dia_semana2.merge(num_victimas_dia_semana2, o
 
 df_provincia2 = df_provincia2[['ANYO_x', 'FECHA', 'count', 'TOTAL_VICTIMAS_24H']]
 
+df_provincia2.sort_values(by='FECHA')
+
+df_provincia2.to_csv('./BBDD/Provincia2.csv')
+
 # ACCIDENTES REDES NEURONALES
 
 PASOS=84

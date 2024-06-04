@@ -50,6 +50,10 @@ df_provincia43 = num_accidentes_por_dia_semana43.merge(num_victimas_dia_semana43
 
 df_provincia43 = df_provincia43[['ANYO_x', 'FECHA', 'count', 'TOTAL_VICTIMAS_24H']]
 
+df_provincia43.sort_values(by='FECHA')
+
+df_provincia43.to_csv('./BBDD/Provincia43.csv')
+
 # ACCIDENTES
 
 df_provincia43['y'] = df_provincia43['count']
