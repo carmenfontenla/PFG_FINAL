@@ -9,7 +9,7 @@ from keras.layers import Dense,Activation,Flatten
 
 def diferencia_meses(fecha_viaje, ultima_fecha_provincia):
     ultima_fecha_promedio_diario = '01/01/2019'
-    ultima_fecha_correcta_promedio_diario = ultima_fecha_promedio_diario.date()
+    ultima_fecha_correcta_promedio_diario = datetime.strptime(ultima_fecha_promedio_diario, '%d/%m/%Y').date()
     fecha_viaje_correcto = datetime.strptime(fecha_viaje, '%d/%m/%Y').date()
     ultima_fecha_correcta_provincia = datetime.strptime(ultima_fecha_provincia, '%d/%m/%Y').date()
     diferencia_promedio_diario = relativedelta(fecha_viaje_correcto, ultima_fecha_correcta_promedio_diario)
@@ -20,20 +20,20 @@ def diferencia_meses(fecha_viaje, ultima_fecha_provincia):
 
 
 def predicciones_promedio_diario(diferencia_meses_promedio_diario):
-    with open('../MODELOS/model_promediodiario.pkl', 'rb') as file:
+    with open('./MODELOS/model_promediodiario.pkl', 'rb') as file:
         model_promediodiario = pickle.load(file)
     df_future = model_promediodiario.make_future_dataframe(periods = diferencia_meses_promedio_diario + 1, freq = 'MS')
     prediccion = model_promediodiario.predict(df_future)
-    prediccion_final_promedio_diario = prediccion.iloc[-1, [2]]
+    prediccion_final_promedio_diario = prediccion.iloc[-1]['yhat_upper']
     return prediccion_final_promedio_diario
 
 
 def predicciones_prophet(diferencia_dias, nombre_modelo):
-    with open('../MODELOS/' + nombre_modelo, 'rb') as file:
+    with open('./MODELOS/' + nombre_modelo, 'rb') as file:
         model_provincia = pickle.load(file)
-    df_future = model_provincia.make_future_dataframe(periods = diferencia_dias + 1, freq = 7)
+    df_future = model_provincia.make_future_dataframe(periods = diferencia_dias + 1, freq = 'D')
     prediccion = model_provincia.predict(df_future)
-    prediccion_final_provincia = prediccion.iloc[-1, [2]]
+    prediccion_final_provincia = prediccion.iloc[-1]['yhat_upper']
     return prediccion_final_provincia
 
 
@@ -74,11 +74,11 @@ def crear_modeloFF():
 
 
 def prediccion_redes_neuronales(diferencia_dias, nombre_modelo, dataset, archivo_scaler):
-    df_provincia = pd.read('../BBDD/' + dataset)
-    with open('../MODELOS/' + archivo_scaler ,'rb') as f:
+    df_provincia = pd.read_csv('./BBDD/' + dataset)
+    with open('./MODELOS/' + archivo_scaler ,'rb') as f:
         scaler = pickle.load(f)
     model = crear_modeloFF()
-    model.save_weights('../MODELOS/' + nombre_modelo)
+    model.save_weights('./MODELOS/' + nombre_modelo)
     ultimos_datos = df_provincia[: -PASOS*2]['count'].values
     ultimos_valores = ultimos_datos.reshape(-1, 1)
     datos_escalados = scaler.transform(ultimos_valores)
