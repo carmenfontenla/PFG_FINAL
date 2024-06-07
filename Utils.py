@@ -37,7 +37,7 @@ def predicciones_prophet(diferencia_dias, nombre_modelo):
     prediccion = model_provincia.predict(df_future)
     prediccion_final_provincia = prediccion.iloc[-1]['yhat_upper']
     prediccion_redondeada_prophet = np.round(prediccion_final_provincia)
-    return prediccion_final_provincia
+    return prediccion_redondeada_prophet
 
 
 PASOS=84
