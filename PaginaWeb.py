@@ -5,6 +5,7 @@ import datetime
 from datetime import datetime
 from Utils import *
 
+
 #Crear el servidor. Se va a hacer en localhost
 app = Flask(__name__)
 # 'waitress-serve --listen=0.0.0.0:8000 PaginaWeb:app' hay que poner esto en la terminal para poder acceder a la pagina web
@@ -155,4 +156,3 @@ def resultado():
 
 if __name__ == '__main__':
     app.run(port = 5001, debug = True)
-
