@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from flask import Flask, render_template, request
 import pickle
 import datetime
@@ -25,7 +26,8 @@ def predicciones_promedio_diario(diferencia_meses_promedio_diario):
     df_future = model_promediodiario.make_future_dataframe(periods = diferencia_meses_promedio_diario + 1, freq = 'MS')
     prediccion = model_promediodiario.predict(df_future)
     prediccion_final_promedio_diario = prediccion.iloc[-1]['yhat_upper']
-    return prediccion_final_promedio_diario
+    prediccion_redondeada_promedio_diario = np.round(prediccion_final_promedio_diario)
+    return prediccion_redondeada_promedio_diario
 
 
 def predicciones_prophet(diferencia_dias, nombre_modelo):
@@ -34,6 +36,7 @@ def predicciones_prophet(diferencia_dias, nombre_modelo):
     df_future = model_provincia.make_future_dataframe(periods = diferencia_dias + 1, freq = 'D')
     prediccion = model_provincia.predict(df_future)
     prediccion_final_provincia = prediccion.iloc[-1]['yhat_upper']
+    prediccion_redondeada_prophet = np.round(prediccion_final_provincia)
     return prediccion_final_provincia
 
 
@@ -100,4 +103,5 @@ def prediccion_redes_neuronales(diferencia_dias, nombre_modelo, dataset, archivo
         x_test=agregarNuevoValor(x_test,parcial[0])
     results = [x for x in results]
     datos_predichos = scaler.inverse_transform(results)
-    return datos_predichos[-1]
+    prediccion_redondeada_redes_neuronales = np.round(datos_predichos[-1])
+    return prediccion_redondeada_redes_neuronales[-1]
