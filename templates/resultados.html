@@ -1,5 +1,17 @@
 <!doctype html>
 <html>
+    <head>
+        <style>
+            .warning-box {
+                border: 2px solid red;
+                padding: 15px;
+                background-color: #ffe6e6;
+                color: red;
+                font-weight: bold;
+                margin: 20px 0;
+            }
+        </style>
+    </head>
     <body>
         <h1>La intensidad media de vehículos en España para la fecha que ingresaste es:</h1>
         <h3>{{prediction1}}</h3>
@@ -7,6 +19,9 @@
         <h3>{{prediction2}}</h3>
         <h1>El número de víctimas en la provincia que seleccionaste para la fecha que ingresaste es:</h1>
         <h3>{{prediction3}}</h3>
-        <a href="index.html">Volver a la página principal</a>
+        <div class="warning-box">
+            <h3>Antes de viajar debes saber que las principales causas de accidentalidad en carretera son las distracciones al volante, exceso de velocidad, consumo de alcohol y drogas, cansancio y fatiga, falta de mantenimiento del vehículo y el incumplimiento de las señales y normas de tráfico. Por eso rogamos que se tomen las precauciones debidas para evitar cualquier tipo de incidente no deseado. No solo te perjudicas a ti, también a tus acompañantes o a otros conductores.</h3>
+        </div>
+        <a href="C:/Users/---/OneDrive - UFV/Escritorio/PFG 2024/GITHUB/PFG_FINAL/templates/index.html">Volver a la página principal</a>
     </body>
 </html>
