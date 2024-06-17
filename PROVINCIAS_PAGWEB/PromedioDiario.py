@@ -36,6 +36,7 @@ promedio_diario['FECHA'] = lista_fechas
 
 promedio_diario['y'] = promedio_diario['Intensidad media diaria de vehículos']
 promedio_diario['ds'] = pd.to_datetime(pd.to_datetime(promedio_diario['FECHA']).dt.date)
+promedio_diario.to_csv('./BBDD/Promedio_Diario.csv')
 
 ts = promedio_diario[['ds', 'y']]
 model = Prophet(
