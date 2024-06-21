@@ -33,25 +33,23 @@ db_provincia1 = df[df['COD_PROVINCIA'] == 1]
 num_victimas_dia_semana1 = db_provincia1.groupby(['ANYO', 'MES', 'DIA_SEMANA'])['TOTAL_VICTIMAS_24H'].sum()
 
 num_victimas_dia_semana1 = num_victimas_dia_semana1.reset_index()
-
-num_victimas_dia_semana1['FECHA'] = num_victimas_dia_semana1.apply(lambda row: str(row['ANYO']) + '/' + str(row['MES']) + '/' + str(row['DIA_SEMANA']), axis = 1)
-
+num_victimas_dia_semana1['FECHA'] = num_victimas_dia_semana1.apply(lambda row:
+str(row['ANYO']) + '/0' + str(row['MES']) + '/0' + str(row['DIA_SEMANA']) if row['MES'] < 10 else str(row['ANYO']) + '/' + str(row['MES']) + '/0' + str(row['DIA_SEMANA']),
+axis = 1)
 num_accidentes_por_dia_semana1 = db_provincia1.groupby(['ANYO', 'MES'])['DIA_SEMANA'].value_counts()
 
 num_accidentes_por_dia_semana1 = num_accidentes_por_dia_semana1.reset_index()
 
-num_accidentes_por_dia_semana1['FECHA'] = num_accidentes_por_dia_semana1.apply(lambda row: str(row['ANYO']) + '/' + str(row['MES']) + '/' + str(row['DIA_SEMANA']), axis = 1)
-
-num_victimas_dia_semana1 = num_victimas_dia_semana1.reset_index()
-
-num_victimas_dia_semana1['FECHA'] = num_victimas_dia_semana1.apply(lambda row: str(row['ANYO']) + '/' + str(row['MES']) + '/' + str(row['DIA_SEMANA']), axis = 1)
+num_accidentes_por_dia_semana1['FECHA'] = num_accidentes_por_dia_semana1.apply(lambda row:
+str(row['ANYO']) + '/0' + str(row['MES']) + '/0' + str(row['DIA_SEMANA']) if row['MES'] < 10 else str(row['ANYO']) + '/' + str(row['MES']) + '/0' + str(row['DIA_SEMANA']),
+axis = 1)
 
 df_provincia1 = num_accidentes_por_dia_semana1.merge(num_victimas_dia_semana1, on = 'FECHA')
 
 df_provincia1 = df_provincia1[['ANYO_x', 'FECHA', 'count', 'TOTAL_VICTIMAS_24H']]
 
 df_provincia1.sort_values(by='FECHA')
-
+print(df_provincia1)
 df_provincia1.to_csv('./BBDD/Provincia1.csv')
 
 # ACCIDENTES PROPHET

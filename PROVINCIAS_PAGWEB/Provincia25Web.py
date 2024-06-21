@@ -34,8 +34,9 @@ num_victimas_dia_semana25 = db_provincia25.groupby(['ANYO', 'MES', 'DIA_SEMANA']
 
 num_victimas_dia_semana25 = num_victimas_dia_semana25.reset_index()
 
-num_victimas_dia_semana25['FECHA'] = num_victimas_dia_semana25.apply(lambda row: str(row['ANYO']) + '/' + str(row['MES']) + '/' + str(row['DIA_SEMANA']), axis = 1)
-
+num_victimas_dia_semana25['FECHA'] = num_victimas_dia_semana25.apply(lambda row:
+str(row['ANYO']) + '/0' + str(row['MES']) + '/0' + str(row['DIA_SEMANA']) if row['MES'] < 10 else str(row['ANYO']) + '/' + str(row['MES']) + '/0' + str(row['DIA_SEMANA']),
+axis = 1)
 num_accidentes_por_dia_semana25 = db_provincia25.groupby(['ANYO', 'MES'])['DIA_SEMANA'].value_counts()
 
 num_accidentes_por_dia_semana25 = num_accidentes_por_dia_semana25.reset_index()
@@ -44,8 +45,9 @@ num_accidentes_por_dia_semana25['FECHA'] = num_accidentes_por_dia_semana25.apply
 
 num_victimas_dia_semana25 = num_victimas_dia_semana25.reset_index()
 
-num_victimas_dia_semana25['FECHA'] = num_victimas_dia_semana25.apply(lambda row: str(row['ANYO']) + '/' + str(row['MES']) + '/' + str(row['DIA_SEMANA']), axis = 1)
-
+num_accidentes_por_dia_semana25['FECHA'] = num_accidentes_por_dia_semana25.apply(lambda row:
+str(row['ANYO']) + '/0' + str(row['MES']) + '/0' + str(row['DIA_SEMANA']) if row['MES'] < 10 else str(row['ANYO']) + '/' + str(row['MES']) + '/0' + str(row['DIA_SEMANA']),
+axis = 1)
 df_provincia25 = num_accidentes_por_dia_semana25.merge(num_victimas_dia_semana25, on = 'FECHA')
 
 df_provincia25 = df_provincia25[['ANYO_x', 'FECHA', 'count', 'TOTAL_VICTIMAS_24H']]

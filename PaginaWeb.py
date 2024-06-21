@@ -135,17 +135,17 @@ def resultado():
             datos_provincia_victimas = modelos_provincias_victimas[int(predict_list[1])]
             meses_promedio_diario, dias_provincia = diferencia_meses(predict_list[0], datos_provincia_accidentes[4])
             if datos_provincia_accidentes[1] == 'No existe':
-                resultado_accidentes = 'No se cuenta suficiente información para esta provincia, por lo que no se puede dar una respuesta exacta. Tome precauciones de todas formas'
+                resultado_accidentes = 'No se cuenta suficiente información para esta provincia, por lo que no se puede dar una respuesta exacta. Tome precauciones de todas formas.'
             elif datos_provincia_accidentes[1] == 'PROPHET':
-                resultado_accidentes = predicciones_prophet(dias_provincia, datos_provincia_accidentes[0], datos_provincia_accidentes[5], 'count')
+                resultado_accidentes = predicciones_prophet(dias_provincia, datos_provincia_accidentes[0], datos_provincia_accidentes[5], 'count', predict_list[0])
             elif datos_provincia_accidentes[1] == 'RN':
-                resultado_accidentes = prediccion_redes_neuronales(dias_provincia, datos_provincia_accidentes[3], datos_provincia_accidentes[5], datos_provincia_accidentes[2], 'count')
+                resultado_accidentes = prediccion_redes_neuronales(dias_provincia, datos_provincia_accidentes[3], datos_provincia_accidentes[5], datos_provincia_accidentes[2], 'count', predict_list[0])
             if datos_provincia_victimas[1] == 'No existe':
-                resultado_victimas = 'No se cuenta suficiente información para esta provincia, por lo que no se puede dar una respuesta exacta. Tome precauciones de todas formas'
+                resultado_victimas = 'No se cuenta suficiente información para esta provincia, por lo que no se puede dar una respuesta exacta. Tome precauciones de todas formas.'
             elif datos_provincia_victimas[1] == 'PROPHET':
-                resultado_victimas = predicciones_prophet(dias_provincia, datos_provincia_victimas[0], datos_provincia_victimas[5], 'TOTAL_VICTIMAS_24H')
+                resultado_victimas = predicciones_prophet(dias_provincia, datos_provincia_victimas[0], datos_provincia_victimas[5], 'TOTAL_VICTIMAS_24H', predict_list[0])
             elif datos_provincia_victimas[1] == 'RN':
-                resultado_victimas = prediccion_redes_neuronales(dias_provincia, datos_provincia_victimas[3], datos_provincia_victimas[5], datos_provincia_victimas[2], 'TOTAL_VICTIMAS_24H')
+                resultado_victimas = prediccion_redes_neuronales(dias_provincia, datos_provincia_victimas[3], datos_provincia_victimas[5], datos_provincia_victimas[2], 'TOTAL_VICTIMAS_24H', predict_list[0])
             resultado = predicciones_promedio_diario(meses_promedio_diario)
         except ValueError:
             resultado = 'Error del sistema. Intentelo de nuevo'

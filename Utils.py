@@ -35,12 +35,14 @@ def predicciones_promedio_diario(diferencia_meses_promedio_diario):
     return prediccion_redondeada_promedio_diario
 
 
-def predicciones_prophet(diferencia_dias, nombre_modelo, database, variable):
+def predicciones_prophet(diferencia_dias, nombre_modelo, database, variable, fecha_viaje):
     with open('./MODELOS/' + nombre_modelo, 'rb') as file:
         model_provincia = pickle.load(file)
     if diferencia_dias <= 0:
         df = pd.read_csv('./BBDD/' + database)
-        prediccion_redondeada_prophet = df.loc[df.index[-1 + diferencia_dias], variable]
+        dia, mes, anyo = fecha_viaje.split('/')
+        fecha_busqueda = f'{anyo}/{mes}/{dia}'
+        prediccion_redondeada_prophet = df[df['FECHA'] == fecha_busqueda][variable].values[0]
     else:
         df_future = model_provincia.make_future_dataframe(periods = diferencia_dias + 1, freq = 'D')
         prediccion = model_provincia.predict(df_future)
@@ -84,12 +86,14 @@ def crear_modeloFF():
     return model
 
 
-def prediccion_redes_neuronales(diferencia_dias, nombre_modelo, dataset, archivo_scaler, variable):
+def prediccion_redes_neuronales(diferencia_dias, nombre_modelo, dataset, archivo_scaler, variable, fecha_viaje):
     df_provincia = pd.read_csv('./BBDD/' + dataset)
     with open('./MODELOS/' + archivo_scaler ,'rb') as f:
         scaler = pickle.load(f)
     if diferencia_dias <= 0:
-        prediccion_redondeada_redes_neuronales = df_provincia.loc[df_provincia.index[-1 + diferencia_dias], variable]
+        dia, mes, anyo = fecha_viaje.split('/')
+        fecha_busqueda = f'{anyo}/{mes}/{dia}'
+        prediccion_redondeada_redes_neuronales = df_provincia[df_provincia['FECHA'] == fecha_busqueda][variable].values[0]
     else:
         model = crear_modeloFF()
         model.save_weights('./MODELOS/' + nombre_modelo)
